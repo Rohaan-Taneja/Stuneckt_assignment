@@ -42,8 +42,13 @@ app.use(cors());
 // routers
 
 import UserRouter from "./Routers/User.Router.js";
+import PostRouter from "./Routers/Post.Router.js";
 
+// all the api call having /user will be redirected to userrouter 
 app.use("/api/user" , UserRouter);
+
+// all the api call having /post will be redirected to userrouter 
+app.use("/api/post" , PostRouter );
 
 
 

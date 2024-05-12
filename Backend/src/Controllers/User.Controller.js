@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import User from "../Models/User.Model.js"
 import { isUserUnique } from "../Utils/UserVerificationMethods.js"
 
@@ -133,5 +134,190 @@ const LoginUser = async (req, res)=>{
 }
 
 
+const getuserdetails = async (req , res )=>{
 
-export {RegisterUser , LoginUser}
+    const uid = req.params.userid
+
+    const userr= await User.findById(uid)
+
+
+
+    res.status(200).json({
+
+        Message : "all okay", 
+        username : userr.Username,
+        followers : "11",
+        following : "10"    
+    })
+
+}
+
+
+const UpdateUserDetails = async(req , res)=>{
+
+    console.log(req.body);
+    const updated_name = req.body.u_name
+
+    const findd_user_with_this_name = await User.findOne({Username : updated_name})
+
+    if(findd_user_with_this_name){
+       return res.status(300).json({
+            message : "user with this name alredy exist"
+        })
+    }
+
+    await User.updateOne(
+        {_id : req.body.u_id },
+        {
+            $set: {
+                Username : updated_name
+            },
+            $currentDate: { lastUpdated: true }
+        }
+        )
+        const userrrr = await User.findById(req.body.u_id)
+
+        console.log("this is the undated user",userrrr);
+        res.status(200).json({
+            message :"updated",
+            username : userrrr.Username
+        })
+
+}
+
+// function to increase followers and following
+const FollowerFollowingIncrease =async (req, res)=>{
+
+            // user1 follows user2 
+    const {user1ID , user2ID} = req.body
+
+    console.log(user1ID , user2ID);
+
+
+    // user1 follows user2 , therefore , user1 followings list increased by 1 
+    await User.updateOne(
+        {_id : user1ID},
+        {$push : {
+            Followings: user2ID
+        },
+        $currentDate : {lastUpdated :true},
+
+        })
+    
+    // user1 follows user2 , therefore user2 followers list increased by 1
+    await User.updateOne(
+        {_id : user2ID},
+        {$push : {
+            Followers : user1ID
+
+        },
+        $currentDate :  {lastUpdated :true}}
+    )
+
+
+    const u1 = await User.findById(user1ID)
+    const u2 = await User.findById(user2ID)
+    console.log("user1" ,  u1 , "user2" , u2);
+
+    res.status(200).json({
+        message : "all okay",
+        user1following: u1.Followings , 
+        user2follwers : u2.Followers
+    }
+       
+    )
+
+}
+
+//fucntion when user1 , unfollows user2
+const FollowerFollowingDecrease =async (req,res) =>{
+
+              // user1 unfollows user2 
+              const {user1ID , user2ID} = req.body
+
+          
+              // user1 unfollows user2 , therefore , user1 followings list decrease by 1 
+              await User.updateOne(
+                  {_id : user1ID},
+                  {$pull : {
+                      Followings: user2ID
+                  },
+                  $currentDate : {lastUpdated :true},
+          
+                  })
+              
+              // user1 unfollows user2 , therefore user2 followers list decrease by 1
+              await User.updateOne(
+                  {_id : user2ID},
+                  {$pull : {
+                      Followers : user1ID
+          
+                  },
+                  $currentDate :  {lastUpdated :true}}
+              )
+          
+          
+              const u1 = await User.findById(user1ID)
+              const u2 = await User.findById(user2ID)
+              console.log("user1" ,  u1 , "user2" , u2);
+          
+              res.status(200).json({
+                  message : "all okay",
+                  user1following: u1.Followings , 
+                  user2follwers : u2.Followers
+              }
+                 
+              )
+
+
+}
+
+
+
+// FUNCTION TO GET FOLLOWERS LIST OF A USER 
+const getAllMyFollowers = async (req, res) =>{
+    const {MyUserID} = req.body
+
+    const user = await User.findById(MyUserID)
+
+    const followersIDlist = user.Followers
+
+    const AllUsers = await User.find(
+        { _id: { $in: followersIDlist } }, 
+        { Username: 1, _id: 1 } 
+    );
+
+    res.status(200).json({
+        message : "all followers",
+        allfollwers : AllUsers
+
+    })
+    console.log(MyUserID);
+
+}
+
+// function to get list of all followings
+const getAllMyFollowings = async (req, res) =>{
+    const {MyUserID} = req.body
+
+    const user = await User.findById(MyUserID)
+
+    const follwingIDlist = user.Followings
+
+    const AllUsers = await User.find(
+        { _id: { $in: follwingIDlist } }, 
+        { Username: 1, _id: 1 } 
+    );
+
+    res.status(200).json({
+        message : "all followers",
+        allfollowings : AllUsers
+
+    })
+    console.log(MyUserID);
+
+}
+
+
+export {RegisterUser , LoginUser , getuserdetails ,UpdateUserDetails ,FollowerFollowingIncrease ,
+    FollowerFollowingDecrease , getAllMyFollowers ,getAllMyFollowings , NoOfFollowers}
