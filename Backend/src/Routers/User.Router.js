@@ -1,5 +1,5 @@
 import  router from "express";
-import {FollowerFollowingDecrease, FollowerFollowingIncrease, getAllMyFollowers, getAllMyFollowings, getuserdetails, LoginUser, NoOfFollowers, RegisterUser, UpdateUserDetails} from "../Controllers/User.Controller.js";
+import {FollowerFollowingDecrease, FollowerFollowingIncrease, getAllMyFollowers, getAllMyFollowings, getuserdetails, LoginUser, RegisterUser, UpdateUserDetails} from "../Controllers/User.Controller.js";
 
 const UserRouter = router();
 

@@ -76,10 +76,10 @@ const RegisterUser =  async (req, res)=>{
 }
 
 
-
+// controller to login the user 
 const LoginUser = async (req, res)=>{
 
-    // whatt we are doing 
+    // whatt we are doing -
     //1) geting input data 
     //2) checking if user exist by username in the backend or not , 
     //3) if we do not found any input username ,then we will send messagee user not registered
@@ -320,4 +320,4 @@ const getAllMyFollowings = async (req, res) =>{
 
 
 export {RegisterUser , LoginUser , getuserdetails ,UpdateUserDetails ,FollowerFollowingIncrease ,
-    FollowerFollowingDecrease , getAllMyFollowers ,getAllMyFollowings , NoOfFollowers}
+    FollowerFollowingDecrease , getAllMyFollowers ,getAllMyFollowings }
